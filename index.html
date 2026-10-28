@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vizi by Vizora</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <img src="Vizy.png" alt="Vizy" class="brand-logo" />
+          <div class="brand-text">
+            <span class="brand-name">Vizy</span>
+            <span class="brand-slogan">Platos que se ven, experiencias que se disfrutan.</span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button id="scanQrBtn" class="primary-btn">Jugar</button>
+          <button id="sendOrderBtn" class="secondary-btn" type="button">Enviar pedido al chef</button>
+        </div>
+      </header>
+
+      <section id="gamesSection" class="games-section hidden" aria-live="polite"></section>
+
+      <main class="layout">
+        <aside class="menu-panel">
+          <div class="panel-heading">
+            <span class="chip">Menú</span>
+            <h2>Platos destacados</h2>
+          </div>
+          <div id="menuList" class="menu-list"></div>
+        </aside>
+
+        <section class="chat-panel">
+          <div class="chat-header">
+            <div>
+              <p class="chat-label">Asistente virtual</p>
+              <h2>Vizi te recomienda</h2>
+            </div>
+            <span class="status-dot">● En línea</span>
+          </div>
+
+          <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+
+          <form id="chatForm" class="chat-form">
+            <label class="sr-only" for="userInput">Escribe tu consulta</label>
+            <input
+              id="userInput"
+              name="userInput"
+              type="text"
+              placeholder="Pregunta por un plato, alergias, vino o combinación..."
+              autocomplete="off"
+            />
+            <button type="submit" class="primary-btn">Enviar</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
