@@ -756,3 +756,33 @@ const latestConfirmedCalories = {
 menuItems.forEach((dish) => {
     if (latestConfirmedCalories[dish.name]) dish.calories = latestConfirmedCalories[dish.name];
 });
+
+
+const latestConfirmedCalories = {
+    "Pescado blanco lacedo en aceite aromatizado": "Pescado: 325 kcal; papas fritas: 717 kcal; vegetales: 128 kcal. Total: 1.170 kcal",
+    "Salmón encostrado en semillas de ajonjolí blanco y negro": "Salmón encostrado: 575 kcal; risotto y parmesano: 415 kcal; vegetales: 120 kcal. Total: 1.110 kcal",
+    "Fiesta de mariscos": "Pescado blanco al ajillo: 255 kcal; salmón en llama de brandy: 350 kcal; frutos del mar: 280 kcal; acompañamiento: 450 kcal. Total: 1.335 kcal",
+    "Cazuela marina": "Frutos del mar: 210 kcal; crema marinera base: 575 kcal; arroz: 195 kcal; patacón: 135 kcal. Total: 1.115 kcal"
+};
+menuItems.forEach((dish) => {
+    if (latestConfirmedCalories[dish.name]) dish.calories = latestConfirmedCalories[dish.name];
+});
+
+const previousFindDishByMessage = findDishByMessage;
+findDishByMessage = function(message) {
+    const previousMatch = previousFindDishByMessage(message);
+    if (previousMatch) return previousMatch;
+
+    const ignoredWords = new Set(["a", "al", "caloria", "calorias", "con", "cuanto", "cuanta", "de", "del", "el", "en", "es", "kcal", "la", "las", "lo", "los", "me", "mi", "pesa", "peso", "por", "plato", "que", "saber", "tiene", "un", "una", "y"]);
+    const words = normalise(message).split(" ").filter((word) => word && !ignoredWords.has(word));
+    if (!words.length) return null;
+
+    const matches = menuItems.map((dish) => {
+          const nameWords = normalise(dish.name).split(" ").filter((word) => word.length >= 5);
+          const matchedWords = nameWords.filter((nameWord) => words.includes(nameWord));
+          return { dish, count: matchedWords.length };
+    }).filter((match) => match.count > 0).sort((a, b) => b.count - a.count);
+
+    if (!matches.length || (matches[1] && matches[1].count === matches[0].count)) return null;
+    return matches[0].dish;
+};
