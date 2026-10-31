@@ -818,3 +818,35 @@ findDishByMessage = function(message) {
     if (!matches.length || (matches[1] && matches[1].count === matches[0].count)) return null;
     return matches[0].dish;
 };
+
+
+const previousShortDishMatcher = findDishByMessage;
+findDishByMessage = function(message) {
+    const match = previousShortDishMatcher(message);
+    if (match) return match;
+
+    const ignored = new Set(["a", "al", "blanco", "caloria", "calorias", "con", "cuanto", "cuanta", "de", "del", "dime", "el", "en", "es", "favor", "gusta", "gustaria", "la", "las", "lo", "los", "me", "mi", "kcal", "pesa", "peso", "por", "plato", "puedes", "que", "quisiera", "saber", "tiene", "un", "una"]);
+    const words = normalise(message).split(" ").filter((word) => word && !ignored.has(word));
+    if (!words.length) return null;
+
+    const near = (left, right) => {
+          if (left === right) return true;
+          if (Math.abs(left.length - right.length) > 1 || Math.min(left.length, right.length) < 3) return false;
+          let i = 0, j = 0, differences = 0;
+          while (i < left.length && j < right.length) {
+                  if (left[i] === right[j]) { i++; j++; continue; }
+                  if (++differences > 1) return false;
+                  if (left.length > right.length) i++;
+                  else if (right.length > left.length) j++;
+                  else { i++; j++; }
+          }
+          return true;
+    };
+    const matches = menuItems.map((dish) => {
+          const nameWords = normalise(dish.name).split(" ").filter((word) => word.length >= 3);
+          const count = nameWords.filter((nameWord) => words.some((word) => near(nameWord, word))).length;
+          return { dish, count };
+    }).filter((candidate) => candidate.count > 0).sort((a, b) => b.count - a.count);
+    if (!matches.length || (matches[1] && matches[1].count === matches[0].count)) return null;
+    return matches[0].dish;
+};
