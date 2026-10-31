@@ -714,3 +714,23 @@ const confirmedWeights = {
 menuItems.forEach((dish) => {
     if (confirmedWeights[dish.name]) dish.weight = confirmedWeights[dish.name];
 });
+
+
+const latestConfirmedWeights = {
+    "Picanha": "350 g de carne; acompañamiento: 390 g",
+    "New york": "350 g de carne; acompañamiento: 390 g",
+    "Rib Eye": "300 g de carne; acompañamiento: 360 g",
+    "Langostinos San Miguel": "200 g de langostinos; acompañamiento: 330 g",
+    "Langostinos en mantequilla de hierbas": "150 g de langostinos; acompañamiento: 270 g",
+    "Langostinos thermidor": "240 g de langostinos; acompañamiento: 180 g",
+    "Langostinos Molinito": "150 g de langostinos; acompañamiento: 240 g",
+    "Pulpo a la parrilla": "140 g de pulpo; acompañamiento: 250 g",
+    "Salmón a las finas hierbas": "220 g de salmón; acompañamiento: 410 g",
+    "Pescado blanco a la plancha": "200 g de pescado; acompañamiento: 390 g",
+    "Pescado blanco al malecón": "370 g de pescado con salsa de camarón; acompañamiento: 480 g",
+    "Pescado blanco vatel": "330 g de pescado con salsa Vatel y gratinado; acompañamiento: 380 g",
+    "Pescado blanco marinera": "330 g de pescado con salsa marinera; acompañamiento: 380 g"
+};
+menuItems.forEach((dish) => {
+    if (latestConfirmedWeights[dish.name]) dish.weight = latestConfirmedWeights[dish.name];
+});
