@@ -703,3 +703,14 @@ getDishClarification = function(intent) {
     });
     return options.length ? `En la carta hay varias opciones relacionadas: ${options.map((dish) => dish.name).join(", ")}. ¿De cuál quieres saber?` : null;
 };
+
+
+const confirmedWeights = {
+    "Picanha": "350 g de carne; 650 g con acompañamiento",
+    "New york": "350 g de carne; 650 g con acompañamiento",
+    "Rib Eye": "300 g de carne; 600 g con acompañamiento",
+    "Langostinos San Miguel": "200 g de langostinos; 450 g con acompañamiento"
+};
+menuItems.forEach((dish) => {
+    if (confirmedWeights[dish.name]) dish.weight = confirmedWeights[dish.name];
+});
