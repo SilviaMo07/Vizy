@@ -812,3 +812,9 @@ button, input {
     min-height: 0;
   }
 }
+
+@media (max-width: 700px) {
+  .chat-panel {
+    order: 0;
+  }
+}
