@@ -850,3 +850,10 @@ findDishByMessage = function(message) {
     if (!matches.length || (matches[1] && matches[1].count === matches[0].count)) return null;
     return matches[0].dish;
 };
+
+
+const previousNaturalLanguageMatcher = findDishByMessage;
+findDishByMessage = function(message) {
+    const normalizedQuestion = message.replace(/\bcuantas\b/gi, "cuanta").replace(/\bcuantos\b/gi, "cuanto");
+    return previousNaturalLanguageMatcher(normalizedQuestion) || previousNaturalLanguageMatcher(message);
+};
