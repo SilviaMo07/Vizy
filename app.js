@@ -734,3 +734,14 @@ const latestConfirmedWeights = {
 menuItems.forEach((dish) => {
     if (latestConfirmedWeights[dish.name]) dish.weight = latestConfirmedWeights[dish.name];
 });
+
+
+const remainingConfirmedWeights = {
+    "Pescado blanco lacedo en aceite aromatizado": "200 g de pescado; acompañamiento: 390 g",
+    "Salmón encostrado en semillas de ajonjolí blanco y negro": "200 g de salmón; acompañamiento: 300 g",
+    "Fiesta de mariscos": "Pescado blanco al ajillo: 140 g; salmón en llama de brandy: 150 g; frutos del mar: 210 g; acompañamiento: 250 g",
+    "Cazuela marina": "Frutos del mar: 200 g (camarones, almejas en su concha, pulpo, calamar, dados de pescado blanco y langostino); crema marinera base: 410 g; acompañamiento: 190 g"
+};
+menuItems.forEach((dish) => {
+    if (remainingConfirmedWeights[dish.name]) dish.weight = remainingConfirmedWeights[dish.name];
+});
