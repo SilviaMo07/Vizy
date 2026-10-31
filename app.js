@@ -601,3 +601,79 @@ addMessage(
   "¡Hola! Soy Vizy, tu asistente virtual de Vizora. Estoy aquí para ayudarte a elegir algo delicioso, cómodo y perfecto para ti. Si me dices qué te gusta, qué no te gusta o qué te apetece hoy, te recomiendo algo con gusto y sin complicarte la vida.",
   "bot"
 );
+
+
+let hasExplicitDishSelection = false;
+menuListEl.addEventListener("click", (event) => {
+    if (event.target.closest(".menu-row")) hasExplicitDishSelection = true;
+});
+
+function findDishByMessage(message) {
+    const query = normalise(message);
+    const ignored = new Set(["a", "al", "algo", "algun", "alguna", "ayuda", "blanco", "con", "cual", "cuanto", "cuanta", "de", "del", "dime", "el", "en", "es", "favor", "gusta", "gustaria", "la", "las", "lo", "los", "me", "menu", "mi", "pesa", "peso", "por", "plato", "pescado", "puedes", "que", "quisiera", "saber", "tiene", "un", "una"]);
+    const queryWords = query.split(" ").filter((word) => word && !ignored.has(word));
+    const exact = menuItems.find((dish) => query.includes(normalise(dish.name)));
+    if (exact) return exact;
+    if (!queryWords.length) return null;
+
+  const near = (a, b) => {
+        if (a === b) return true;
+        if (Math.abs(a.length - b.length) > 1 || Math.min(a.length, b.length) < 5) return false;
+        let i = 0, j = 0, differences = 0;
+        while (i < a.length && j < b.length) {
+                if (a[i] === b[j]) { i++; j++; continue; }
+                if (++differences > 1) return false;
+                if (a.length > b.length) i++;
+                else if (b.length > a.length) j++;
+                else { i++; j++; }
+        }
+        return true;
+  };
+    const matches = menuItems.map((dish) => {
+          const words = normalise(dish.name).split(" ").filter((word) => word && !ignored.has(word));
+          const count = words.filter((word) => queryWords.some((queryWord) => near(word, queryWord))).length;
+          return { dish, count };
+    }).filter((match) => match.count > 0).sort((a, b) => b.count - a.count);
+    if (!matches.length || (matches[1] && matches[1].count === matches[0].count)) return null;
+    return matches[0].dish;
+}
+
+function getDishClarification(intent) {
+    const fish = ["pescado", "salmon", "atun", "bacalao", "pez"];
+    const seafood = ["marisco", "camaron", "langostino", "pulpo", "calamar", "almeja"];
+    const terms = [...fish, ...seafood].filter((term) => intent.includes(term));
+    if (!terms.length) return null;
+    const options = menuItems.filter((dish) => terms.some((term) => normalise(`${dish.name} ${dish.description} ${dish.category}`).includes(term)));
+    return options.length ? `En la carta hay varias opciones relacionadas: ${options.map((dish) => dish.name).join(", ")}. ¿De cuál quieres saber?` : null;
+}
+
+function handleInput(message) {
+    const intent = normalise(message);
+    const mentionedDish = findDishByMessage(message);
+    const dish = mentionedDish || (hasExplicitDishSelection ? selectedDish : null);
+    const disliked = getDislikedTerms(intent);
+    if (["pedido", "ordenar", "confirmo", "lo pido", "quiero este", "quiero pedir", "confirmar pedido"].some((term) => intent.includes(term))) {
+          if (!dish) return "¿Qué plato deseas pedir? Dime su nombre o selecciónalo en el menú.";
+          sendOrderToChef(dish);
+          return `Perfecto, tu pedido de ${dish.name} ya está listo para enviarse al chef por WhatsApp.`;
+    }
+    if (disliked.length) {
+          const safeDish = getSafeRecommendation(intent);
+          if (safeDish) return `Entiendo. Si no te gusta ${formatDislikedTerms(disliked)}, te recomiendo ${safeDish.name}. Es una opción que no incluye ese detalle y además tiene un equilibrio muy agradable de sabor. ${safeDish.description || "Te va a encantar."}`;
+    }
+    if (!intent || intent.includes("hola") || intent.includes("buenas") || intent.includes("ayuda")) return `¡Hola! Soy Vizy, tu asistente virtual de Vizora. Estoy aquí para ayudarte a elegir algo delicioso según tu gusto, tus preferencias y la experiencia que quieras vivir. Si me dices qué te apetece o qué no te gusta, te recomiendo algo perfecto para ti.`;
+    const pairing = ["sugerencia", "recomienda", "acompa", "vino", "coctel", "cocktail", "postre", "maridaje", "bebida"].some((term) => intent.includes(term));
+    const allergy = ["alerg", "lacteo", "lactosa", "gluten", "mariscos", "frutos secos", "nuts", "pescado"].some((term) => intent.includes(term));
+    const cooking = ["cocida", "cocido", "coccion", "a punto", "3 4", "3/4", "4 5", "4/5", "medio", "temperatura"].some((term) => intent.includes(term));
+    if (!dish) {
+          const clarification = getDishClarification(intent);
+          if (clarification) return clarification;
+    }
+    if (pairing) return dish ? getPairingResponse(dish, intent) : "¿Qué plato quieres acompañar? Dime el nombre o selecciónalo en el menú y te recomiendo una combinación.";
+    if (dish && (mentionedDish || hasExplicitDishSelection || intent.includes("plato") || intent.includes("calorias") || intent.includes("peso") || intent.includes("temperatura") || allergy || cooking)) return buildDishResponse(dish);
+    if (intent.includes("menu") || intent.includes("ver platos") || intent.includes("recomendacion")) {
+          const top = menuItems.slice(0, 3).map((item) => item.name).join(", ");
+          return `Hoy tengo opciones muy buenas: ${top}. Si quieres, te ayudo a elegir según tu gusto, si prefieres algo más ligero, más sabroso o más contundente.`;
+    }
+    return `Claro, te puedo ayudar con eso. Si me dices el plato, lo que te gusta o lo que no te gusta, te recomiendo algo perfecto para tu momento.`;
+}
