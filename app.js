@@ -745,3 +745,14 @@ const remainingConfirmedWeights = {
 menuItems.forEach((dish) => {
     if (remainingConfirmedWeights[dish.name]) dish.weight = remainingConfirmedWeights[dish.name];
 });
+
+
+const latestConfirmedCalories = {
+    "Pescado blanco lacedo en aceite aromatizado": "Pescado: 325 kcal; papas fritas: 717 kcal; vegetales: 128 kcal. Total: 1.170 kcal",
+    "Salmón encostrado en semillas de ajonjolí blanco y negro": "Salmón encostrado: 575 kcal; risotto y parmesano: 415 kcal; vegetales: 120 kcal. Total: 1.110 kcal",
+    "Fiesta de mariscos": "Pescado blanco al ajillo: 255 kcal; salmón en llama de brandy: 350 kcal; frutos del mar: 280 kcal; acompañamiento: 450 kcal. Total: 1.335 kcal",
+    "Cazuela marina": "Frutos del mar: 210 kcal; crema marinera base: 575 kcal; arroz: 195 kcal; patacón: 135 kcal. Total: 1.115 kcal"
+};
+menuItems.forEach((dish) => {
+    if (latestConfirmedCalories[dish.name]) dish.calories = latestConfirmedCalories[dish.name];
+});
