@@ -677,3 +677,14 @@ function handleInput(message) {
     }
     return `Claro, te puedo ayudar con eso. Si me dices el plato, lo que te gusta o lo que no te gusta, te recomiendo algo perfecto para tu momento.`;
 }
+
+
+function getDishClarification(intent) {
+    const fish = ["pescado", "salmon", "atun", "bacalao", "pez"];
+    const seafood = ["marisco", "camaron", "langostino", "pulpo", "calamar", "almeja"];
+    const fishTerms = fish.filter((term) => intent.includes(term));
+    const terms = [...fishTerms, ...seafood.filter((term) => intent.includes(term))];
+    if (!terms.length) return null;
+    const options = menuItems.filter((dish) => terms.some((term) => normalise(`${dish.name} ${dish.category}`).includes(term)));
+    return options.length ? `En la carta hay varias opciones relacionadas: ${options.map((dish) => dish.name).join(", ")}. ¿De cuál quieres saber?` : null;
+}
