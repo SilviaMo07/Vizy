@@ -688,3 +688,18 @@ function getDishClarification(intent) {
     const options = menuItems.filter((dish) => terms.some((term) => normalise(`${dish.name} ${dish.category}`).includes(term)));
     return options.length ? `En la carta hay varias opciones relacionadas: ${options.map((dish) => dish.name).join(", ")}. ¿De cuál quieres saber?` : null;
 }
+
+
+getDishClarification = function(intent) {
+    const fish = ["pescado", "salmon", "atun", "bacalao", "pez"];
+    const seafood = ["marisco", "camaron", "langostino", "pulpo", "calamar", "almeja"];
+    const fishTerms = fish.filter((term) => intent.includes(term));
+    const seafoodTerms = seafood.filter((term) => intent.includes(term));
+    const terms = [...fishTerms, ...seafoodTerms];
+    if (!terms.length) return null;
+    const options = menuItems.filter((dish) => {
+          const searchable = normalise(`${dish.name} ${fishTerms.length && !seafoodTerms.length ? "" : dish.category}`);
+          return terms.some((term) => searchable.includes(term));
+    });
+    return options.length ? `En la carta hay varias opciones relacionadas: ${options.map((dish) => dish.name).join(", ")}. ¿De cuál quieres saber?` : null;
+};
